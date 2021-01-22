@@ -7,7 +7,7 @@ export default async ({ query, variables, props, signal }) => {
 	try {
 
 		const headers = new Headers()
-		const token = props.token.value
+		const token = props.token.value.id
 
 		headers.append('Content-Type', 'application/json')
 		headers.append('Time-Zone', userTimeZone)

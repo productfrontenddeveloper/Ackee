@@ -6,24 +6,11 @@ import Favicon from '../Favicon'
 import enhanceUrl from '../../enhancers/enhanceUrl'
 import sumByProp from '../../utils/sumByProp'
 
-const IconColumn = (props) => {
+const Row = (props) => {
 
 	const hasBar = props.barWidth != null
 
-	return (
-		h('div', { className: 'flexList__column flexList__column--spacing-right' },
-			hasBar === true && h('div', {
-				className: 'flexList__bar flexList__bar--favicon',
-				style: { '--width': `${ props.barWidth }%` }
-			}),
-			h(Favicon, { url: props.faviconUrl })
-		)
-	)
-
-}
-
-const UrlRow = (props) => {
-
+	const faviconUrl = (new URL('/favicon.ico', props.url)).href
 	const hostnameUrl = props.url.hostname
 	const pathnameUrl = props.url.pathname
 
@@ -36,32 +23,13 @@ const UrlRow = (props) => {
 			onMouseEnter: props.onEnter,
 			onMouseLeave: props.onLeave
 		},
-			h(IconColumn, {
-				barWidth: props.barWidth,
-				faviconUrl: props.faviconUrl
-			}),
+			h('div', { className: 'flexList__column flexList__column--spacing-right' },
+				hasBar === true && h('div', { className: 'flexList__bar flexList__bar--favicon', style: { '--width': `${ props.barWidth }%` } }),
+				h(Favicon, { url: faviconUrl })
+			),
 			h('div', { className: 'flexList__column flexList__column--text-adjustment' },
 				h('span', {}, hostnameUrl),
 				h('span', { className: 'flexList__obscured' }, pathnameUrl)
-			)
-		)
-	)
-
-}
-
-const TextRow = (props) => {
-
-	return (
-		h('a', {
-			className: 'flexList__row flexList__row--has-hover',
-			onMouseEnter: props.onEnter,
-			onMouseLeave: props.onLeave
-		},
-			h(IconColumn, {
-				barWidth: props.barWidth
-			}),
-			h('div', { className: 'flexList__column flexList__column--text-adjustment' },
-				h('span', { className: 'flexList__truncated' }, props.text)
 			)
 		)
 	)
@@ -77,27 +45,15 @@ const PresentationIconList = (props) => {
 	return (
 		h('div', { className: 'flexList' },
 			h('div', { className: 'flexList__inner' },
-				props.items.map((item, index) => {
-					const commonProps = {
-						key: item.text + index,
+				props.items.map((item, index) => (
+					h(Row, {
+						key: item.url.href + index,
 						barWidth: hasCount === true ? proportionalWidth(item) : undefined,
 						onEnter: () => props.onEnter(index),
-						onLeave: () => props.onLeave(index)
-					}
-
-					if (item.url == null) {
-						return h(TextRow, {
-							...commonProps,
-							text: item.text
-						})
-					}
-
-					return h(UrlRow, {
-						...commonProps,
-						faviconUrl: (new URL('/favicon.ico', item.url)).href,
-						url: item.url
+						onLeave: () => props.onLeave(index),
+						...item
 					})
-				})
+				))
 			)
 		)
 	)
@@ -107,8 +63,7 @@ const PresentationIconList = (props) => {
 PresentationIconList.propTypes = {
 	items: PropTypes.arrayOf(
 		PropTypes.shape({
-			url: PropTypes.object,
-			text: PropTypes.string.isRequired,
+			url: PropTypes.object.isRequired,
 			count: PropTypes.number
 		})
 	).isRequired,

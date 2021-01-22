@@ -20,10 +20,6 @@ module.exports = gql`
 		"""
 		siteReferrer: URL
 		"""
-		Where the user came from. Specified using the source query parameter.
-		"""
-		source: String
-		"""
 		Preferred language of the user. ISO 639-1 formatted.
 		"""
 		siteLanguage: String
@@ -90,10 +86,6 @@ module.exports = gql`
 		Where the user came from. Either unknown, a specific page or just the domain. This depends on the browser of the user.
 		"""
 		siteReferrer: URL
-		"""
-		Where the user came from. Specified using the source query parameter.
-		"""
-		source: String
 		"""
 		Preferred language of the user. ISO 639-1 formatted.
 		"""

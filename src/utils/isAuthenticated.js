@@ -1,11 +1,11 @@
 'use strict'
 
 const KnownError = require('../utils/KnownError')
-const isExpired = require('../utils/isExpired')
+const ttl = require('../utils/ttl')
 const tokens = require('../database/tokens')
 const permanentTokens = require('../database/permanentTokens')
 
-module.exports = async (authorization, ttl) => {
+module.exports = async (authorization) => {
 
 	// Token not in request
 	if (authorization == null) {
@@ -25,7 +25,7 @@ module.exports = async (authorization, ttl) => {
 
 	if (tokenEntry != null) {
 		// Tokens can expire
-		const valid = isExpired(tokenEntry.updated, ttl) === false
+		const valid = ttl(tokenEntry.updated, process.env.ACKEE_TTL) === true
 
 		// Token too old
 		if (valid === false) {

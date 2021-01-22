@@ -7,11 +7,11 @@ const defaults = {
 	viewsYear: 0
 }
 
-export default (facts = {}) => {
+export default (items) => {
 
 	return {
 		...defaults,
-		...facts
+		...items
 	}
 
 }

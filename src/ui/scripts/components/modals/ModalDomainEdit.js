@@ -1,5 +1,6 @@
 import { createElement as h, useState } from 'react'
 import PropTypes from 'prop-types'
+// import { useHotkeys } from 'react-hotkeys-hook'
 
 import Input from '../Input'
 import Textarea from '../Textarea'
@@ -7,10 +8,16 @@ import Label from '../Label'
 import Spinner from '../Spinner'
 import Spacer from '../Spacer'
 
-import commonModalProps from '../../utils/commonModalProps'
+import customTracker from '../../../../utils/customTracker'
 import shortId from '../../utils/shortId'
 
 const ModalDomainEdit = (props) => {
+
+	// Currently not possible:
+	// https://github.com/JohannesKlauss/react-hotkeys-hook/issues/276
+	// useHotkeys('esc', props.closeModal, {
+	// 	filter: () => props.current === true
+	// })
 
 	const [ inputs, setInputs ] = useState({
 		title: props.title
@@ -20,6 +27,11 @@ const ModalDomainEdit = (props) => {
 		...inputs,
 		[key]: e.target.value
 	})
+
+	const copyInput = (e) => {
+		e.target.select()
+		document.execCommand('copy')
+	}
 
 	const updateDomain = (e) => {
 		e.preventDefault()
@@ -36,7 +48,7 @@ const ModalDomainEdit = (props) => {
 	const idId = shortId()
 	const embedId = shortId()
 
-	const trackerUrl = window.env.customTracker.url || '/tracker.js'
+	const trackerUrl = customTracker.url || '/tracker.js'
 	const srcUrl = (new URL(trackerUrl, location.href)).href
 	const serverUrl = location.origin
 
@@ -67,17 +79,18 @@ const ModalDomainEdit = (props) => {
 					readOnly: true,
 					placeholder: 'Domain id',
 					value: props.id,
-					copyOnFocus: true
+					onFocus: copyInput
 				}),
 
 				h(Label, { htmlFor: embedId }, 'Embed code'),
 
 				h(Textarea, {
+					type: 'text',
 					id: embedId,
 					readOnly: true,
 					rows: 4,
 					value: `<script async src="${ srcUrl }" data-ackee-server="${ serverUrl }" data-ackee-domain-id="${ props.id }"></script>`,
-					copyOnFocus: true
+					onFocus: copyInput
 				})
 
 			),
@@ -86,28 +99,26 @@ const ModalDomainEdit = (props) => {
 				h('button', {
 					type: 'button',
 					className: 'card__button link',
-					onClick: props.closeModal,
-					disabled: props.active === false
+					onClick: props.closeModal
 				}, 'Close'),
 
 				h('div', {
-					className: 'card__separator'
+					className: 'card__separator '
 				}),
 
 				h('button', {
 					type: 'button',
 					className: 'card__button link color-destructive',
-					onClick: deleteDomain,
-					disabled: props.active === false
+					onClick: deleteDomain
 				}, 'Delete'),
 
 				h('div', {
-					className: 'card__separator'
+					className: 'card__separator '
 				}),
 
 				h('button', {
 					className: 'card__button card__button--primary link color-white',
-					disabled: props.fetching === true || props.active === false
+					disabled: props.fetching === true
 				}, props.fetching === true ? h(Spinner) : 'Rename')
 
 			)
@@ -117,12 +128,13 @@ const ModalDomainEdit = (props) => {
 }
 
 ModalDomainEdit.propTypes = {
-	...commonModalProps,
+	current: PropTypes.bool.isRequired,
 	id: PropTypes.string.isRequired,
 	title: PropTypes.string.isRequired,
 	fetching: PropTypes.bool.isRequired,
 	updateDomain: PropTypes.func.isRequired,
-	deleteDomain: PropTypes.func.isRequired
+	deleteDomain: PropTypes.func.isRequired,
+	closeModal: PropTypes.func.isRequired
 }
 
 export default ModalDomainEdit

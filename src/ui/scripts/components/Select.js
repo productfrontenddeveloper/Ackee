@@ -6,11 +6,9 @@ const Select = (props) => {
 	return (
 		h('select', {
 			className: 'select',
-			id: props.id,
-			required: props.required,
-			disabled: props.disabled,
 			value: props.value,
-			onChange: props.onChange
+			onChange: props.onChange,
+			disabled: props.disabled
 		},
 			props.items.map((item, index) => (
 				h('option', {
@@ -24,9 +22,6 @@ const Select = (props) => {
 }
 
 Select.propTypes = {
-	id: PropTypes.string,
-	required: PropTypes.bool,
-	disabled: PropTypes.bool,
 	value: PropTypes.string,
 	onChange: PropTypes.func.isRequired,
 	items: PropTypes.arrayOf(

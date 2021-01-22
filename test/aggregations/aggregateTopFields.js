@@ -3,12 +3,12 @@
 const test = require('ava')
 const uuid = require('uuid').v4
 
-const aggregateTopRecords = require('../../src/aggregations/aggregateTopRecords')
+const aggregateTopFields = require('../../src/aggregations/aggregateTopFields')
 const createDate = require('../../src/utils/createDate')
 
 test('return aggregation', async (t) => {
 
-	const result = aggregateTopRecords(uuid(), [ 'osName', 'osVersion' ], createDate())
+	const result = aggregateTopFields(uuid(), [ 'osName', 'osVersion' ], createDate())
 
 	t.true(Array.isArray(result))
 

@@ -1,73 +1,98 @@
 import { createElement as h, Fragment, useEffect } from 'react'
 
-import { version, homepage } from '../../../../../package.json'
-import {
-	MODALS_DOMAIN_ADD,
-	MODALS_DOMAIN_EDIT,
-	MODALS_EVENT_ADD,
-	MODALS_EVENT_EDIT,
-	MODALS_PERMANENT_TOKEN_ADD,
-	MODALS_PERMANENT_TOKEN_EDIT
-} from '../../constants/modals'
+import { version, homepage } from '../../../../../package'
+import { MODALS_DOMAIN_EDIT, MODALS_DOMAIN_ADD, MODALS_PERMANENT_TOKEN_EDIT, MODALS_PERMANENT_TOKEN_ADD } from '../../constants/modals'
 
 import CardSetting from '../cards/CardSetting'
 import LinkItem from '../LinkItem'
 import Line from '../Line'
 import Message from '../Message'
 
-const FetchingMessage = (props) => {
-
-	return h(Message, { status: 'warning' }, `Fetching ${ props.label }...`)
-
-}
-
 const RouteSettings = (props) => {
 
 	useEffect(() => {
 
-		props.fetchDomains(props)
-		props.fetchEvents(props)
 		props.fetchPermanentTokens(props)
 
 	}, [])
 
-	const showModal = (type, data = {}) => {
+	const showDomainEditModal = (id, title) => {
 
 		props.addModalsModal({
-			type,
-			props: data
+			type: MODALS_DOMAIN_EDIT,
+			props: {
+				id,
+				title
+			}
 		})
 
 	}
 
-	const createItems = (items, editFn, createFn, createLabel) => [
-		...items.map(
-			(item) => [
+	const showDomainAddModal = () => {
+
+		props.addModalsModal({
+			type: MODALS_DOMAIN_ADD,
+			props: {}
+		})
+
+	}
+
+	const showPermanentTokenEditModal = (id, title) => {
+
+		props.addModalsModal({
+			type: MODALS_PERMANENT_TOKEN_EDIT,
+			props: {
+				id,
+				title
+			}
+		})
+
+	}
+
+	const showPermanentTokenAddModal = () => {
+
+		props.addModalsModal({
+			type: MODALS_PERMANENT_TOKEN_ADD,
+			props: {}
+		})
+
+	}
+
+	const domainsFetching = [
+		h(Message, { status: 'warning' }, 'Fetching domains...')
+	]
+
+	const domainsItems = [
+		...props.domains.value.map(
+			(domain) => [
 				h(LinkItem, {
 					type: 'button',
-					text: item.id,
-					onClick: () => editFn(item)
-				}, item.title),
+					text: domain.id,
+					onClick: () => showDomainEditModal(domain.id, domain.title)
+				}, domain.title),
 				h(Line)
 			]
 		).flat(),
-		h(LinkItem, { type: 'button', onClick: createFn }, createLabel)
+		h(LinkItem, { type: 'button', onClick: showDomainAddModal }, 'New domain')
 	]
 
-	const showDomainAddModal = () => showModal(MODALS_DOMAIN_ADD)
-	const showDomainEditModal = (domain) => showModal(MODALS_DOMAIN_EDIT, domain)
-	const showEventAddModal = () => showModal(MODALS_EVENT_ADD)
-	const showEventEditModal = (event) => showModal(MODALS_EVENT_EDIT, event)
-	const showPermanentTokenAddModal = () => showModal(MODALS_PERMANENT_TOKEN_ADD)
-	const showPermanentTokenEditModal = (permanentToken) => showModal(MODALS_PERMANENT_TOKEN_EDIT, permanentToken)
+	const permanentTokensFetching = [
+		h(Message, { status: 'warning' }, 'Fetching permanent tokens...')
+	]
 
-	const domainsFetching = h(FetchingMessage, { label: 'domains' })
-	const eventsFetching = h(FetchingMessage, { label: 'events' })
-	const permanentTokensFetching = h(FetchingMessage, { label: 'permanent tokens' })
-
-	const domainsItems = createItems(props.domains.value, showDomainEditModal, showDomainAddModal, 'New domain')
-	const eventsItems = createItems(props.events.value, showEventEditModal, showEventAddModal, 'New event')
-	const permanentTokensItems = createItems(props.permanentTokens.value, showPermanentTokenEditModal, showPermanentTokenAddModal, 'New permanent token')
+	const permanentTokensItems = [
+		...props.permanentTokens.value.map(
+			(permanentToken) => [
+				h(LinkItem, {
+					type: 'button',
+					text: permanentToken.id,
+					onClick: () => showPermanentTokenEditModal(permanentToken.id, permanentToken.title)
+				}, permanentToken.title),
+				h(Line)
+			]
+		).flat(),
+		h(LinkItem, { type: 'button', onClick: showPermanentTokenAddModal }, 'New permanent token')
+	]
 
 	return (
 		h(Fragment, {},
@@ -83,19 +108,13 @@ const RouteSettings = (props) => {
 			h(CardSetting, {
 				headline: 'Domains'
 			},
-				...(props.domains.fetching === true ? [ domainsFetching ] : domainsItems)
-			),
-
-			h(CardSetting, {
-				headline: 'Events'
-			},
-				...(props.events.fetching === true ? [ eventsFetching ] : eventsItems)
+				...(props.domains.fetching === true ? domainsFetching : domainsItems)
 			),
 
 			h(CardSetting, {
 				headline: 'Permanent Tokens'
 			},
-				...(props.permanentTokens.fetching === true ? [ permanentTokensFetching ] : permanentTokensItems)
+				...(props.permanentTokens.fetching === true ? permanentTokensFetching : permanentTokensItems)
 			),
 
 			h(CardSetting, {

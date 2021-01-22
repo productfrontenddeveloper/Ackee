@@ -1,37 +1,42 @@
-import { createElement as h, Fragment, useMemo } from 'react'
+import { createElement as h, Fragment, useEffect } from 'react'
 
-import mergedDurationsLoader from '../../loaders/mergedDurationsLoader'
-import durationsLoader from '../../loaders/durationsLoader'
-import useWidgets from '../../hooks/useWidgets'
-import useWidgetsForDomains from '../../hooks/useWidgetsForDomains'
+import selectDurationsValue from '../../selectors/selectDurationsValue'
+import enhanceDurations from '../../enhancers/enhanceDurations'
+import mergeDurations from '../../utils/mergeDurations'
+import overviewRoute from '../../utils/overviewRoute'
+
+import CardDurations from '../cards/CardDurations'
 
 const RouteDurations = (props) => {
 
-	const mergedWidgetConfigs = useMemo(() => {
+	useEffect(() => {
 
-		return [{
-			loader: mergedDurationsLoader({
-				interval: props.filter.interval,
-				limit: 14
-			}),
-			additionalProps: {
-				wide: true,
-				headline: 'Durations'
-			}
-		}]
+		props.fetchDurations(props)
 
 	}, [ props.filter.interval ])
 
-	const renderedMergedWidgets = useWidgets(props, mergedWidgetConfigs)
-	const renderedDomainWidgets = useWidgetsForDomains(props, durationsLoader, {
-		interval: props.filter.interval,
-		limit: 7
-	})
-
 	return (
 		h(Fragment, {},
-			renderedMergedWidgets,
-			renderedDomainWidgets
+			h(CardDurations, {
+				wide: true,
+				headline: 'Durations',
+				interval: props.filter.interval,
+				loading: props.fetching,
+				items: mergeDurations(props)
+			}),
+
+			props.domains.value.map(
+				(domain) => (
+					h(CardDurations, {
+						key: domain.id,
+						headline: domain.title,
+						interval: props.filter.interval,
+						loading: props.durations.fetching,
+						items: enhanceDurations(selectDurationsValue(props, domain.id).value, 7),
+						onMore: () => props.setRoute(overviewRoute(domain))
+					})
+				)
+			)
 		)
 	)
 

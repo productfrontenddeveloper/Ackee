@@ -1,15 +1,21 @@
 import { createElement as h, useState } from 'react'
 import PropTypes from 'prop-types'
+// import { useHotkeys } from 'react-hotkeys-hook'
 
 import Input from '../Input'
 import Label from '../Label'
 import Spinner from '../Spinner'
 import Spacer from '../Spacer'
 
-import commonModalProps from '../../utils/commonModalProps'
 import shortId from '../../utils/shortId'
 
 const ModalPermanentTokenAdd = (props) => {
+
+	// Currently not possible:
+	// https://github.com/JohannesKlauss/react-hotkeys-hook/issues/276
+	// useHotkeys('esc', props.closeModal, {
+	// 	filter: () => props.current === true
+	// })
 
 	const [ inputs, setInputs ] = useState({
 		title: ''
@@ -52,8 +58,7 @@ const ModalPermanentTokenAdd = (props) => {
 				h('button', {
 					type: 'button',
 					className: 'card__button link',
-					onClick: props.closeModal,
-					disabled: props.active === false
+					onClick: props.closeModal
 				}, 'Close'),
 
 				h('div', {
@@ -62,7 +67,7 @@ const ModalPermanentTokenAdd = (props) => {
 
 				h('button', {
 					className: 'card__button card__button--primary link color-white',
-					disabled: props.fetching === true || props.active === false
+					disabled: props.fetching === true
 				}, props.fetching === true ? h(Spinner) : 'Add')
 
 			)
@@ -72,9 +77,10 @@ const ModalPermanentTokenAdd = (props) => {
 }
 
 ModalPermanentTokenAdd.propTypes = {
-	...commonModalProps,
+	current: PropTypes.bool.isRequired,
 	fetching: PropTypes.bool.isRequired,
-	addPermanentToken: PropTypes.func.isRequired
+	addPermanentToken: PropTypes.func.isRequired,
+	closeModal: PropTypes.func.isRequired
 }
 
 export default ModalPermanentTokenAdd

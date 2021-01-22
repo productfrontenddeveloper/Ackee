@@ -22,27 +22,15 @@
 		font-size: .9em;
 	}
 
-	&--fixed {
-		position: fixed;
-	}
-
-	&--tooltip {
-		max-width: 300px;
-	}
-
 	&--floating {
+		position: fixed;
+		min-width: 210px;
 		border-radius: 12px;
 	}
 
 	&.visible {
 		opacity: 1;
 		pointer-events: all;
-	}
-
-	&__content {
-		margin: 0;
-		padding: $gutter/3 $gutter*1.2;
-		font-size: .9em;
 	}
 
 	&__button {
@@ -67,7 +55,7 @@
 		margin: 0 $gutter/2;
 		padding: $gutter/2 $gutter/1.6;
 		color: $white;
-		border-radius: $innerRadius;
+		border-radius: $radius;
 
 		&.active {
 			color: $primary;

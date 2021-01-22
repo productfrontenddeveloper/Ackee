@@ -31,10 +31,7 @@ node_modules
 
 # Dist folder
 dist/*
-!dist/favicon.ico
-!dist/index.css
-!dist/index.js
-!dist/tracker.js
+!dist/.gitkeep
 
 # Vercel
 .vercel

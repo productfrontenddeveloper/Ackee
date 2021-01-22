@@ -23,8 +23,8 @@
 	position: relative;
 	width: $size;
 	height: $size;
-	background: $context;
 	border-radius: 100%;
+	background: $context;
 
 	&__circle {
 		position: absolute;
